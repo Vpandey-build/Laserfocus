@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Focus Revise</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#f6f1e8">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f6f1e8;--card:#fffaf1;--ink:#1d1a16;--mute:#6b6458;--line:#e4dccd;--acc:#d9641a;--soft:#fbe9d9;--ok:#2f7d4f;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#15130f;--card:#1e1b16;--ink:#f1ebdf;--mute:#a89f90;--line:#3a352c;--acc:#f08a3c;--soft:#33261a;--ok:#6fcf97;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Devanagari",sans-serif;padding-top:env(safe-area-inset-top,0)}
+.view{position:absolute;left:0;right:0;top:env(safe-area-inset-top,0);bottom:calc(60px + env(safe-area-inset-bottom,0));display:flex;flex-direction:column}
+.hide{display:none!important}
+#fl{display:flex;gap:8px;align-items:center;padding:10px 12px;overflow-x:auto;border-bottom:1px solid var(--line);flex:none}
+.chip{flex:none;font:inherit;font-size:.88rem;font-weight:600;border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:18px;padding:6px 13px;cursor:pointer}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+#st{margin-left:auto;flex:none;font-size:.8rem;color:var(--mute);padding-left:6px}
+#feed{flex:1;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain}
+.cd{min-height:100%;scroll-snap-align:start;scroll-snap-stop:always;padding:22px 20px 18px;display:flex;flex-direction:column;justify-content:center;gap:14px;border-bottom:1px solid var(--line)}
+.meta{display:flex;gap:8px;align-items:center;font-size:.8rem}
+.tg{background:var(--soft);color:var(--acc);font-weight:700;border-radius:12px;padding:3px 11px}
+.mod{color:var(--mute)}
+.cd h2{margin:0;font-size:1.35rem;line-height:1.3}
+.bd{margin:0;font-size:1.18rem;line-height:1.65}
+.wy{background:var(--card);border-left:4px solid var(--acc);border-radius:10px;padding:11px 14px;font-size:.98rem}
+.wy b{display:block;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:var(--acc);margin-bottom:2px}
+.ln{background:none;border:0;padding:0;font:inherit;font-size:.9rem;color:var(--acc);font-weight:600;cursor:pointer;text-align:left}
+.bt{display:flex;gap:10px;margin-top:2px}
+.bt button{flex:1;font:inherit;font-weight:700;padding:13px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.bt .b1.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.bt .b2.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.sp{align-items:center;text-align:center;color:var(--mute)}
+#tb{display:flex;gap:6px;align-items:center;padding:8px 10px;border-bottom:1px solid var(--line);flex:none}
+#tb select,#tb input{font:inherit;font-size:.85rem;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 8px;min-width:0}
+#tb select{flex:1}#tb input{width:58px;text-align:center}
+.ib{flex:none;width:38px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:1rem;cursor:pointer}
+.ib.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+#pgs{flex:1;overflow:auto;position:relative;background:var(--line)}
+#pg{width:calc(100% * var(--z,1));display:flex;flex-direction:column;gap:8px;padding:8px}
+.pgh{width:100%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.pgh canvas{width:100%;height:100%;display:block}
+#pg.night canvas{filter:invert(1) hue-rotate(180deg)}
+#pick{margin:auto;max-width:360px;text-align:center;padding:28px 22px}
+#pick h2{margin:0 0 8px}
+.btn{display:inline-block;font:inherit;font-weight:700;background:var(--acc);color:#fff;border:0;border-radius:14px;padding:14px 22px;cursor:pointer}
+.note{color:var(--mute);font-size:.88rem}
+#nav{position:fixed;left:0;right:0;bottom:0;height:calc(60px + env(safe-area-inset-bottom,0));padding-bottom:env(safe-area-inset-bottom,0);background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;z-index:10}
+#nav button{background:none;border:0;font:inherit;font-weight:700;font-size:.85rem;color:var(--mute);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;cursor:pointer}
+#nav button i{font-style:normal;font-size:1.3rem}#nav button.on{color:var(--acc)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+</style>
+</head>
+<body>
+<div id="rv" class="view">
+<div id="fl"></div>
+<div id="feed"></div>
+</div>
+<div id="bv" class="view hide">
+<div id="tb" class="hide"><select id="jr" aria-label="Jump to resource"></select><input id="pn" inputmode="numeric" aria-label="Page number"><button class="ib" id="zo" aria-label="Zoom out">−</button><button class="ib" id="zi" aria-label="Zoom in">+</button><button class="ib" id="nt" aria-label="Night mode">☾</button><button class="ib" id="cp" aria-label="Change PDF">📂</button></div>
+<div id="pgs"><div id="pick"><h2>Your book</h2><p class="note" id="pm">Choose the Laser Focus PDF from your phone. It stays on this phone only and is never uploaded.</p><button class="btn" id="pb">Choose PDF</button></div><div id="pg" class="hide"></div></div>
+</div>
+<input type="file" id="pf" accept="application/pdf,.pdf" class="hide">
+<nav id="nav"><button data-t="r" class="on"><i>🔁</i>Revise</button><button data-t="b"><i>📖</i>Book</button></nav>
+<script>
+const $=s=>document.querySelector(s);
+const RES=[["R01","अध्ययन-प्रतिज्ञा",1,1],["R02","Focus क्यों?",2,4],["R03","मन को समझिए",5,7],["R04","टालमटोल से बाहर",8,9],["R05","विघ्न और वातावरण",10,12],["R06","Phone: Tool या Toy?",13,19],["R07","पवित्र Focus Corner",20,21],["R08","Action Book",22,37],["R09","21 दिन",38,39],["R10","Laser Focus Ritual",40,41],["R11","Rest & Recharge",42,43],["R12","पूरा कोर्स एक पन्ने में",44,45]];
+const resOf=p=>RES.filter(r=>p>=r[2]&&p<=r[3])[0];
+const modOf=p=>p<=4?1:p<=7?2:p<=21?3:4;
+const RAW=[
+[1,"नियम","अध्ययन करें, देखें नहीं","कोर्स केवल देखिए मत — इसका अध्ययन (Study) कीजिए। नोट्स बनाइए, कोई भाग छोड़कर आगे मत जाइए, कम से कम दो बार पढ़िए।","देखना मनोरंजन है, अध्ययन परिवर्तन। इसीलिए नोट्स और दो बार पढ़ना ज़रूरी है।"],
+[1,"नियम","तुरंत Action","जहाँ कहा है «अभी के अभी», वहीं कीजिए — प्रतीक्षा मत कीजिए।","जो सीख तुरंत लागू नहीं होती, वह सिर्फ़ जानकारी बनकर रह जाती है।"],
+[1,"नियम","फिसल जाएँ तो","जब लगे कि इन शिक्षाओं से दूर जा रहे हैं — कोर्स फिर से देखिए। गिर भी गए, तो चिंता मत कीजिए: फिर से पढ़िए, फिर से समझिए, फिर से लागू कीजिए।","गिरना अंत नहीं है; लौट आने की आदत ही असली प्रगति है।"],
+[2,"सूत्र 1","अवधानात् जायते सिद्धिः","Focus = सफलता — जीवन के हर क्षेत्र में। Focus नहीं, तो सफलता नहीं।\nNot only Focus = Success, but also NO Focus = NO Success.","सफलता का सबसे सीधा कारण प्रतिभा नहीं, Focus है।"],
+[2,"सूत्र 2","अवधानं परमं धनम्","आपका Focus (Attention) आपकी सबसे क़ीमती संपत्ति है — समय नहीं।\nYour focused time is valuable to everyone.","पैसा और समय भी तभी काम आते हैं, जब Attention उन पर टिके।"],
+[2,"सूत्र 3","अवधानात् कालरक्षणम्","Focus समय बचाता है — जितना अधिक Focus, उतना तेज़ काम।\nThe more focused you are, the faster you work.","समय बढ़ा नहीं सकते, पर Focus से उसी समय में ज़्यादा काम हो सकता है।"],
+[2,"सूत्र 4","अवधानं कर्मे मूल्यवर्धकम्","Focused काम सबसे मूल्यवान है — आज की अर्थव्यवस्था उसी को सबसे अधिक देती है।\nModern economy pays highly to the people who can focus deeply.","जिस काम में गहरा Focus लगता है, बाज़ार में उसी का दाम सबसे ज़्यादा है।"],
+[2,"सूत्र 5","अवधानात् कर्म दुर्लभम्","Focused काम सबसे दुर्लभ है — आज अधिकतर लोग Focus कर ही नहीं पाते।\nModern work culture promotes busyness over productivity.","जो दुर्लभ है, वही आपकी असली बढ़त बनता है।"],
+[2,"सूत्र 6","अवधानं बुद्धेः श्रेष्ठम्","Focus बुद्धि (Intelligence) से श्रेष्ठ है — और Focus सीखा जा सकता है।\nA focused fool achieves way more than a distracted genius.","बुद्धि जन्म से मिलती है, Focus अभ्यास से बनता है।"],
+[2,"सूत्र 7","अवधानात् तृप्तिः जायते, अवधानात् जीवनार्थः","Focus से जीवन में सबसे अधिक संतोष और अर्थ आता है।\nOn the days you have done focused hard work, tiredness feels like nectar.","काम से थकान तो होगी ही; Focus उसे संतोष में बदल देता है।"],
+[2,"कहानी","सफलता का रहस्य — एक शब्द","1991 के एक भोज (Dinner Party) में आयोजक ने सभी अतिथियों से पूछा — «आपकी सफलता की चाबी क्या है?» Warren Buffett ने बिना एक क्षण रुके, एक ही शब्द में उत्तर दिया — Focus।","चाबी जटिल नहीं है; मुश्किल उसे रोज़ अपनाना है।"],
+[3,"अवधारणा","जीवन के 5 क्षेत्र","शारीरिक, मानसिक, सामाजिक, आर्थिक, आध्यात्मिक — पाँचों में Focus = Success।\nयह संसार ऐसे असफल लोगों से भरा है, जिनके पास प्रतिभा (Talent) है — क्योंकि वे Focus नहीं कर पाते।","प्रतिभा अकेली काफ़ी नहीं; Focus उसे परिणाम में बदलता है।"],
+[3,"अवधारणा","संपत्ति-क्रम (Asset Hierarchy)","Focus → समय → बुद्धि → कौशल → संपर्क → पैसा।\nजो Social Media आपको «free» लगता है, उसका दाम आप अपने Attention से चुका रहे हैं।","पैसा सबसे आख़िरी कड़ी है; उसकी जड़ Focus है।"],
+[4,"अवधारणा","काम = समय × Focus","100 काम = 1 घंटा × 100% Focus, या 10 घंटे × 10% Focus। अधिकतर लोग दूसरी जगह हैं।\n100% तीव्रता से 1 घंटा, 50% तीव्रता के 5 घंटों से बेहतर है।","घंटे गिनने से ज़्यादा ज़रूरी है — उन घंटों में Focus कितना था।"],
+[4,"श्लोक","अनन्याश्चिन्तयन्तो मां ये जनाः पर्युपासते","(भगवद्गीता 9.22)\nजो अनन्य भाव से केवल मेरा चिंतन करते हैं — उनके पास जो है, उसकी मैं रक्षा करता हूँ, और जो चाहिए, वह देता हूँ।","एक ही दिशा में अटूट ध्यान — यही अनन्य भाव है।"],
+[5,"अवधारणा","मन की सीढ़ी","तमस (Procrastination) → रजस (Distraction) → सत्व (Focus) → शुद्ध सत्व (Flow)।\nमन की सीढ़ी पर आप जितना ऊपर, उतना गहरा Focus।","पहले पहचानिए कि आप किस सीढ़ी पर हैं, तभी अगला कदम समझ आएगा।"],
+[5,"अवधारणा","प्रवर्तन ऊर्जा (Activation Energy)","Laser Focus को चालू करने में जो प्रयास लगता है — वही प्रवर्तन ऊर्जा है। बार-बार Focus करने से यह ऊर्जा घटती है, और चेतना बढ़ती है।","शुरू करना सबसे कठिन होता है; अभ्यास से वही आसान होता जाता है।"],
+[6,"अवधारणा","Distraction बनाम Focus","Distraction = ध्यान का बिखर जाना। Focus = ध्यान का एक जगह इकट्ठा होना।\nजो धूप शरीर को हल्का-सा गरम करती है, वही एक बिंदु पर इकट्ठी हो जाए, तो स्टील को भी जला देती है।","Focus कोई नई शक्ति नहीं — वही ऊर्जा है, बस एक जगह इकट्ठी।"],
+[6,"अवधारणा","Distraction के 3 मूल कारण","काम-वासना (Desire) — Desire is the mother of Distractions।\nचंचल मन (Nature of Mind)।\nदुर्बल ध्येय (Weak Goal) — इसलिए इच्छाशक्ति भी दुर्बल।","कारण जानेंगे, तभी अपने भीतर का असली कारण पकड़ पाएँगे।"],
+[6,"श्लोक","चञ्चलं हि मनः कृष्ण प्रमाथि बलवद् दृढम्","(भगवद्गीता 6.34)\nहे कृष्ण, यह मन बड़ा चंचल, उथल-पुथल करने वाला, बलवान और हठी है।","मन का चंचल होना उसका स्वभाव है; इसे अनुशासन से साधना पड़ता है।"],
+[6,"अवधारणा","Attention — जीवन की मुद्रा","पैसे से आप समय, कौशल, स्वास्थ्य और प्रेम नहीं ख़रीद सकते — Attention से ख़रीद सकते हैं।\nWhere your attention goes, your energy flows, & your destiny follows.","आज आपका Attention जिस पर गया, वही आपका भविष्य बनाता है।"],
+[7,"अवधारणा","Focus किया जाता है, होता नहीं","चित्तस्य एकबिन्द्ववस्थितिः एकाग्रता। ध्यानं कर्तव्यं, न घटितव्यम्।\nFocus एक कर्म है, कोई घटना नहीं। Distraction अपने-आप हो जाता है; Focus को एक काम की तरह कीजिए।","इंतज़ार मत कीजिए कि Focus «हो जाए» — उसे शुरू कीजिए।"],
+[7,"अभ्यास","रिवर्स इंजीनियरिंग","अपनी एक समस्या की जड़ तक पहुँचिए। हर पंक्ति पर पूछिए: «इसके नीचे क्या है?» — जब तक जड़ न मिल जाए।","ऊपर की समस्या हटाने से नहीं, जड़ हटाने से बात बनती है।"],
+[7,"अवधारणा","Flow — प्रवाह अवस्था","काम करते-करते भूल जाना कि आप कौन हैं, कहाँ हैं, क्या समय है। भूख, नींद, सुविधा-असुविधा — कुछ नहीं दिखता। प्रयास गायब हो जाता है और परिणाम अपने-आप बहने लगते हैं।","यही वह अवस्था है जहाँ सबसे अच्छा काम होता है; इसे पहचानिए, ताकि दोहरा सकें।"],
+[7,"श्लोक","तदेवार्थमात्रनिर्भासं स्वरूपशून्यमिव समाधिः","(योगसूत्र 3.3)\nवह अवस्था, जिसमें केवल ध्येय ही प्रकाशित होता है और स्वयं का बोध शून्य हो जाता है — वही समाधि है।","Flow की शास्त्रीय परिभाषा: काम और करने वाला एक हो जाते हैं।"],
+[8,"समाधान","टालमटोल का इलाज: कर्म","Focus एक कर्म है; Procrastination कर्म नहीं — अकर्म (तमस) है। इसका इलाज है — कर्म।\nInaction → Action → Thought → Intelligence।","टालमटोल को सोचकर नहीं, एक छोटे कर्म से तोड़ा जाता है।"],
+[8,"समाधान","कारण 1 · दुर्बल बुद्धि","मन और बुद्धि की लड़ाई में मन का जीतना।\nसमाधान: कोर्स बार-बार देखिए — बुद्धि को फिर से भरिए (Recharge)।","बुद्धि मज़बूत होगी, तभी मन पर उसकी पकड़ बनेगी।"],
+[8,"समाधान","कारण 2 · प्रेरणाभाव","Lack of Motivation।\nसमाधान: स्पष्टता — क्या, क्यों, कैसे। Motivation Action से आती है। Discipline नहीं, Devotion।","प्रेरणा का इंतज़ार मत कीजिए; काम शुरू करने से वही आती है।"],
+[8,"समाधान","कारण 3 · भय","असफलता और अस्वीकार का डर।\nसमाधान: Action न करने का डर बड़ा कीजिए। डर Action से भूखा मरता है।","कुछ न करने का नुकसान, असफलता के डर से कहीं बड़ा है।"],
+[8,"समाधान","कारण 4, 5, 7 · पूर्णतावाद, अतिमन्थन, अधैर्य","परिपूर्णतावाद → Progress over Perfection — Perfection केवल कल्पना में है।\nअतिमन्थन → केवल अगले कदम की चिंता; विलाप को टालिए — «आज नहीं, कल»।\nअधैर्य → धीमे चलिए (Slow down) — लंबी साँस लीजिए।","तीनों में समाधान एक ही है — अगला छोटा कदम, शांति से।"],
+[8,"समाधान","कारण 6 · संयमाभाव","Lack of Self Control।\nसमाधान: ऊब को अपनाइए (Embrace Boredom)।","ऊब से भागना ही बार-बार फ़ोन उठाने की जड़ है।"],
+[8,"समाधान","कारण 8 · आलस्य","Laziness।\nसमाधान: बैठिए और कुछ मत कीजिए — कुछ ही मिनट में काम का मन होगा।","मन स्थिर नहीं रह सकता; कुछ न करने पर वह खुद काम माँगता है।"],
+[8,"समाधान","अंतिम समाधान · संगति","सभी 8 कारणों का अंतिम समाधान: Laser-Focused लोगों, High Achievers की संगति। न हो सके, तो उनके जीवन के बारे में पढ़िए और सुनिए।","हम उन्हीं के जैसे बनते हैं, जिनके बीच समय बिताते हैं।"],
+[8,"चेतावनी","टालमटोल की क़ीमत","प्रगति का अभाव → तनाव बढ़ना → ग्लानि बढ़ना → आत्मविश्वास घटना → मानसिक स्वास्थ्य बिगड़ना → जीवन के हर क्षेत्र पर प्रभाव → जीवन-प्रलय।","छोटी-सी टालमटोल भी इस ज़ंजीर की पहली कड़ी है।"],
+[8,"आज का एक काम","अपने 3 सबसे बड़े कारण","अपने 3 सबसे बड़े कारण गोले से चिह्नित कीजिए, और उनके समाधान आज से लागू कीजिए।","सब आठ पर नहीं, पहले सिर्फ़ तीन पर काम कीजिए।"],
+[9,"अभ्यास","स्पष्टता-पत्र","जब तक ठीक-ठीक पता नहीं कि काम क्या है, क्यों है, कैसे, कहाँ और कब — तब तक आप उसे ठीक से नहीं कर पाएँगे। लिखिए, और अंत में: पहला छोटा Action क्या है?","अस्पष्ट काम से बचने का मन करता है; स्पष्ट काम शुरू हो जाता है।"],
+[10,"Checklist","हर Session से पहले","Mobile बाहर कमरे से दूर · extra tabs बंद · मेज़ साफ़ · दरवाज़ा बंद, सबको बता दें · खाना बाहर।\nसभी ✓ करने के बाद ही Focus Mode में प्रवेश करें।","विघ्न पहले हटाइए; Session के बीच उन्हें हटाना मुश्किल होता है।"],
+[11,"अवधारणा","Focus 80% वातावरण पर निर्भर","बाहरी वातावरण → भीतरी वातावरण → आदतें → स्वभाव → भविष्य।\nDistraction को एक-एक करके नहीं — एक साथ हटाइए, और ऐसा वातावरण बनाइए जिसमें Distraction हो ही नहीं।","वातावरण बदलना इच्छाशक्ति से कहीं आसान है।"],
+[11,"अवधारणा","मन वही चाहता है, जो आँखें देखती हैं","Mind desires what eyes see।\nPosters, पत्रिकाएँ, अख़बार — आसपास जितने कम, उतना अच्छा। सामने सादी दीवार सबसे अच्छी।","जो दिखता ही नहीं, वह ललचाता भी नहीं।"],
+[12,"Checklist","भीतरी विघ्न","भूख लहरों में आती है — Ignore कीजिए; Session से 1–1.5 घंटे पहले कुछ हल्का खा लीजिए।\nविचारों को टालिए — Bullet Points में लिखिए और आगे बढ़िए।\nमूड की रक्षा कीजिए — न बहुत प्रसन्न, न दुखी: शांत और गंभीर (Sober)।","भूख, विचार और मूड संभाल लिए, तो Session सहज चलता है।"],
+[12,"Checklist","5 आदतें जो Focus चुराती हैं","1. हर काम में भटकना 2. बार-बार इंद्रिय-सुख 3. दरारें सहना (Broken Window) 4. बहुत कुछ करना 5. Multitasking।\nआप दो काम एक साथ कर सकते हैं, पर दो कामों पर एक साथ Focus नहीं कर सकते।","Focus किसी एक बड़ी चूक से नहीं, इन छोटी आदतों से रिसता है।"],
+[12,"अभ्यास","विचार-पर्ची (Thought Parking)","Session में जो भी विचार आए — एक पंक्ति में लिखिए, और वापस काम पर।","विचार को लिख लेने से मन को भरोसा हो जाता है कि वह खोएगा नहीं।"],
+[13,"अवधारणा","आपका असली Potential","आपका Potential आपकी प्रतिभा (Talent) नहीं है, आपकी बुद्धि भी नहीं। आपका Potential है — एक काम पर कठोर निरंतरता (Ruthless Consistency) से टिके रहने की क्षमता। और आपका फ़ोन वही चुरा रहा है।","असली दाँव पर प्रतिभा नहीं, निरंतरता है।"],
+[13,"अवधारणा","Phone का Check Loop","फ़ोन check किया → दिमाग़ को लगातार उत्तेजना की आदत → Focus करना और कठिन → फिर check।\nइसे Tool की तरह उपयोग कीजिए — इसे अपना नौकर बनाइए, इसके नौकर मत बनिए।","चक्र पहचान लेंगे, तभी उसे तोड़ने की जगह मिलेगी।"],
+[14,"प्रतिज्ञा","4 प्रतिज्ञाएँ","अभिमन्यु (Silent the Distractions) · अर्जुन (Delete the Distractions) · भीष्म (Kill the Distraction) · शिशुपाल (कोई प्रतिज्ञा नहीं)।\nजितना ऊपर जाओगे, उतना अधिक Focus कर पाओगे।","अपनी तैयारी के अनुसार एक स्तर चुनिए और तुरंत Action लीजिए।"],
+[15,"प्रतिज्ञा","The Toilet Principle","Phone को toilet की तरह treat करें: केवल ज़रूरत पड़ने पर touch करें, जितनी ज़रूरत हो उतना ही use करें, और use करके तुरंत दूर रख दें।","ज़रूरत का साधन बनकर रहेगा, तो आदत नहीं बनेगा।"],
+[15,"अवधारणा","Friction का नियम","Insert Friction for mindless habits, Remove Friction from focus area।\nPhone तक पहुँचने में जितनी अधिक मेहनत लगेगी, उतना ही कम उपयोग करने का मन होगा।","इच्छाशक्ति से लड़ने से आसान है, रास्ता कठिन बना देना।"],
+[16,"प्रतिज्ञा","Browser-Only Rule","यदि कोई social media या email बहुत अत्यधिक आवश्यक है: केवल Laptop पर, केवल Browser में, वो भी मात्र Scheduled time पर। Phone पर कभी नहीं।","ज़रूरी चीज़ भी तय समय और तय जगह तक सीमित रहे।"],
+[18,"प्रतिज्ञा","3 Critical Rules","1. NO EXCEPTIONS — एक बार जो decide किया, उसमें compromise नहीं।\n2. NO “JUST 5 MINUTES”।\n3. NO DOWNGRADING — एक बार जो level चुना, उससे नीचे कभी मत गिरो। केवल ऊपर जाओ।","छूट की एक गुंजाइश भी पूरी प्रतिज्ञा को ढीला कर देती है।"],
+[19,"प्रतिज्ञा","जेब-कार्ड: मैं Phone का Boss हूँ","मैं Phone का Boss हूँ, Phone मेरा Boss नहीं है। मैं decide करूँगा कि phone कब use होगा। Phone decide नहीं करेगा कि मेरा ध्यान कब भटकेगा।\nIf you don’t kill distraction, distraction will kill your dreams.","फ़ोन की ओर हाथ जाए, तब यही पंक्तियाँ दोहराइए।"],
+[20,"अवधारणा","पवित्र Laser Focus Corner","इस कोने का एकमात्र उद्देश्य — Focus। आराम नहीं, सुविधाएँ नहीं, मनोरंजन नहीं।\nकेवल 3 चीज़ें: मेज़, कुर्सी (मुँह पूर्व या उत्तर), और घड़ी। सामने 3 चित्र: इष्टदेव, गुरुदेव, सबसे बड़ी प्रेरणा।","जगह तय होगी, तो वहाँ बैठते ही मन समझ जाएगा कि अब Focus का समय है।"],
+[20,"आज का एक काम","अपना कोना चुनिए","आज ही अपना कोना चुनिए और उसे पूरा खाली कीजिए — बाकी कदम एक-एक करके।","खाली जगह से शुरुआत, बाक़ी सब अपने-आप सरल हो जाता है।"],
+[22,"अवधारणा","Action Book का नक्शा","Life → Values → Goals → Milestones → Tasks → Focused Sessions।\nFocused Session से पहले Focused जीवन चाहिए।","आज का हर Session आपके जीवन के लक्ष्य से जुड़ा होना चाहिए।"],
+[23,"अभ्यास","गंभीर होने का निर्णय","5–10 वर्ष बाद आप कोई तो होंगे। कौन? कहाँ? — यह आज, अभी तय हो रहा है।\nलिखिए — जो लिखा जाता है, वही होता है।","भविष्य अपने-आप नहीं बनता; आज के निर्णय से बनता है।"],
+[24,"अभ्यास","Values Sheet — मेरे मूल्य","मृत्यु-शय्या पर आप कौन-सी भावनाएँ अनुभव करना चाहेंगे? कम से कम 3 — भूतकाल (Past Tense) में लिखिए। फिर Print कीजिए और धीरे-धीरे पढ़िए।","अंत से सोचने पर साफ़ दिखता है कि आज क्या सच में मायने रखता है।"],
+[26,"अवधारणा","Goals: कम लक्ष्य, बेहतर Focus","3–5 लंबे लक्ष्य। Lesser Goals = Better Focus।\nआपमें Focus की कमी नहीं, रुचि की कमी है। आप Movie में 3 घंटे Focus कर लेते हैं, पर पढ़ाई में 30 मिनट नहीं।","गहरी रुचि वाला लक्ष्य चुनिए, तो Focus मेहनत नहीं रहता।"],
+[28,"अवधारणा","पड़ाव के 4 गुण","Practical · Precise · Progress-Trackable · Action Focused।\nपड़ाव वह हो, जो आप सीधे कर सकें — परिणाम नहीं, कर्म। (कर्मण्येवाधिकारस्ते — गीता 2.47)","जो हाथ में है उसका पड़ाव बनाइए, जो हाथ में नहीं उसका नहीं।"],
+[30,"अवधारणा","Deep Work बनाम Shallow Work","Deep Work: रोज़ 2–3 Sessions, हर दिन उसी तय समय पर।\nShallow Work (Emails, Meetings, Admin): कम से कम कीजिए, दूसरों को सौंपिए, सब एक साथ समय-सीमा में — Session के बीच कभी नहीं।","Focus की ऊर्जा सीमित है; उसे अनावश्यक कामों पर नष्ट मत कीजिए।"],
+[31,"अवधारणा","10 मिनट और 2 मिनट के नियम","10 मिनट का नियम: केवल पहुँचकर 10 मिनट काम किया, तो भी आधा गोला — आपकी Streak नहीं टूटेगी।\nशुरू करने का मन नहीं? बस शुरू कीजिए, केवल 2 मिनट। आपका दिमाग़ अधूरे काम से नफ़रत करता है — 2 पर नहीं रुकेंगे।","शुरू करना ही जीत है; बाक़ी दिमाग़ खुद पूरा करवा लेता है।"],
+[31,"अवधारणा","Inversion Thinking","सफल कैसे हों — यह भूल जाइए। पूछिए: क्या करने से असफलता पक्की है? जीतने की नहीं, न हारने की सोचिए।\nजैसे — कोई काम बिल्कुल न हो, यह पक्का करना है? सरल उत्तर: फ़ोन उसी कमरे में रखिए।","मूर्खता से बचना, प्रतिभा खोजने से कहीं सरल है।"],
+[33,"अवधारणा","Daily Success Streak","हर दिन एक निशान: ● सारे काम पूरे · ◐ आधा (कम से कम न्यूनतम 10 मिनट) · ○ खाली। Streak मत टूटने दीजिए।\nYou don’t rise to the levels of your goals, you fall to the levels of your systems. — Atomic Habits","लक्ष्य नहीं, रोज़ की व्यवस्था तय करती है कि आप कहाँ पहुँचेंगे।"],
+[34,"अभ्यास","Anti-Goal Sheet","«यदि मैं एकाग्रता से अपने ध्येय-प्राप्ति के लिए आज कार्य नहीं करूँगा, तो निश्चय ही…» — ऐसी 10 बातें लिखिए। इसे Values Sheet के सामने रखिए।","एक ओर क्या पाना है, दूसरी ओर क्या खोना पड़ेगा — दोनों दिखें, तो इरादा पक्का होता है।"],
+[36,"अवधारणा","Sacrifice Sheet","अपने लक्ष्यों के लिए आप क्या-क्या छोड़ने को तैयार हैं — और क्या नहीं? जो आप छोड़ने को तैयार नहीं, वही चीज़ें वह व्यक्ति छोड़ने को तैयार है, जो आपको हरा देगा।","समझौता किस चीज़ पर होता है, यह जानना ही पहला बचाव है।"],
+[38,"अभ्यास","21 दिन — मन को बोर करो","मन एक बिगड़ा हुआ बच्चा है — हर बात पर «ना»। Focus Corner में बैठिए: साथ में कुछ नहीं — न फ़ोन, न कंप्यूटर, न पुस्तक। केवल एक घड़ी। कम से कम 1 घंटा — 21 दिन तक, हर दिन।","ऊब सहने की क्षमता ही Attention Span की जड़ है।"],
+[38,"अवधारणा","बैठे-बैठे मन में क्या होगा?","5 मिनट: ज़िद (Tantrums)। 10 मिनट: जीवन और काम के विचार आने लगेंगे। 20 मिनट: विचार आएँगे, पर आपको नियंत्रित नहीं करेंगे। 30 मिनट: अनावश्यक विचार साफ़ — केवल वही रहेंगे, जिन्हें आप चुनेंगे।","ज़िद आए तो आने दीजिए — उठिए मत, बस बैठिए।"],
+[40,"Ritual","Laser Focus Ritual · कदम 1–5","1. Phone बाहर 2. प्रणाम करके प्रवेश 3. मेज़ साफ़ (5 मिनट) 4. बैठिए — रीढ़ सीधी 5. धीमा प्राणायाम — 3 धीमी गहरी साँसें।","संगीतकारों का Show से पहले Ritual होता है; आपका Ritual दिमाग़ को संकेत देता है।"],
+[40,"Ritual","Laser Focus Ritual · कदम 6–10","6. धीमी प्रार्थना 7. Blinders लगाइए 8. अपनी 7 Sheets धीरे पढ़िए (10–15 मिनट) 9. त्राटक — 30–60 सेकंड, फिर 5..4..3..2..1.. «जय श्री राम» और पहला छोटा Action 10. Stay in — रुकिए मत, भटकिए मत।","पहला Action छोटा ही सही — छोटी शुरुआत रुकावट हटा देती है।"],
+[41,"अवधारणा","Ritual = अष्टांग योग","यम (क्या करना है) · नियम (क्या नहीं करना है) · आसन (Focus Corner) · प्राणायाम (धीमी साँसें) · प्रत्याहार (Blinders) · धारणा (Sheets पढ़ना) · ध्यान (त्राटक) · समाधि (Stay in)।","यह कोई नई विधि नहीं — शास्त्रों की विधि है।"],
+[41,"श्लोक","गुरु प्रणाम","अज्ञानतिमिरान्धस्य ज्ञानाञ्जनशलाकया ।\nचक्षुरुन्मीलितं येन तस्मै श्री गुरवे नमः ॥","Session से पहले की यह प्रार्थना मन को विनम्र और एकाग्र करती है।"],
+[42,"अवधारणा","Sprint → Rest → Recharge → Reassess","Laser Focus को Non-stop बना देना सबसे बड़ी ग़लतियों में से एक है। शेर दिन में चार बार शिकार नहीं करता।\nFlow एक शिखर (Peak) है — और हर शिखर के लिए घाटी (Valley) चाहिए।","Recovery छोड़ी तो Burnout पक्का; सम्मान किया तो Flow जल्दी लौटेगा।"],
+[42,"आज का एक काम","अगला Rest तय कीजिए","अपने कैलेंडर में अगला Rest का समय अभी तय कीजिए — Focus जितना लंबा, विश्राम उतना।","तय किया हुआ विश्राम ही सच में हो पाता है।"],
+[44,"सार","पूरा कोर्स एक पन्ने में","क्यों → क्या → कैसे → बनाना।\nFocus = Success · No Focus = No Success। 1 घंटा 100% Focus > 10 घंटे 10% Focus। एक समय में एक काम।","जब भी लगे कि शिक्षाओं से दूर जा रहे हैं, यही सार दोबारा पढ़िए।"],
+[45,"सार","Focus — जीवन का Default","The goal is not entering flow once in a while. The goal is building a life where flow is the default — not the exception.\nहर काम में Focus: Workout, बातचीत, Creative काम, चलना, खाना बनाना, भगवान का नाम।","Focus केवल काम निकालने का Tool न रहे — यह दूसरा स्वभाव बन जाए।"]
+];
+const C=RAW.map((a,i)=>({id:i,p:a[0],t:a[1],h:a[2],b:a[3],w:a[4],m:modOf(a[0])}));
+const SK="fr-st",PK="fr-pref";
+let ST={},PF={f:"all",z:1,night:0,last:1};
+try{ST=JSON.parse(localStorage.getItem(SK))||{}}catch(e){}
+try{PF=Object.assign(PF,JSON.parse(localStorage.getItem(PK))||{})}catch(e){}
+const sv=()=>{try{localStorage.setItem(SK,JSON.stringify(ST));localStorage.setItem(PK,JSON.stringify(PF))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const kOf=id=>(ST[id]&&ST[id].k)||0;
+let Q=[],round=0;
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function pool(){const f=PF.f;return C.filter(c=>f==="all"||(f==="rev"?kOf(c.id)===2:c.m===+f))}
+function refill(){if(Q.length)return;const had=round>0,p=pool();
+if(!p.length){Q=["empty"];return}
+round++;let L=shuffle(p.slice());const keep=L.filter(c=>kOf(c.id)!==1||Math.random()<.3);if(keep.length>=Math.min(5,L.length))L=keep;
+Q=L.map(c=>c.id);if(had)Q.unshift("sep")}
+function cardHTML(id){
+if(id==="sep")return'<article class="cd sp"><div style="font-size:2rem">🔁</div><h2>Round '+(round-1)+' done</h2><p class="bd">You have been through every card here. The deck reshuffles now — cards you marked Revisit come back more often.</p></article>';
+if(id==="empty")return'<article class="cd sp"><div style="font-size:2rem">🔁</div><h2>Nothing here yet</h2><p class="bd">Tap “Revisit” on any card and it will collect in this list.</p></article>';
+const c=C[id],r=resOf(c.p),k=kOf(id);
+return'<article class="cd" data-id="'+id+'"><div class="meta"><span class="tg">'+esc(c.t)+'</span><span class="mod">Module '+c.m+'</span></div><h2>'+esc(c.h)+'</h2><p class="bd">'+esc(c.b).replace(/\n/g,"<br>")+'</p><div class="wy"><b>Why it matters</b>'+esc(c.w)+'</div><button class="ln" data-a="bk" data-p="'+c.p+'">📖 '+r[0]+' · p.'+c.p+' — Open in book</button><div class="bt"><button class="b2'+(k===2?" on":"")+'" data-a="rv">🔁 Revisit</button><button class="b1'+(k===1?" on":"")+'" data-a="ok">✓ Got it</button></div></article>'}
+const feed=$("#feed");
+const seen=typeof IntersectionObserver==="function"?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&e.intersectionRatio>=.6&&!e.target._s){e.target._s=1;const id=e.target.dataset.id;if(id!==undefined){ST[id]=ST[id]||{};ST[id].n=(ST[id].n||0)+1;sv()}}}),{root:feed,threshold:[.6]}):null;
+function more(n){for(let i=0;i<n;i++){refill();const id=Q.shift();if(id==="empty"&&feed.querySelector('[data-id]')===null&&i>0)break;const d=document.createElement("div");d.innerHTML=cardHTML(id);const el=d.firstChild;feed.appendChild(el);if(seen&&el.dataset.id!==undefined)seen.observe(el);if(id==="empty")break}}
+function stats(){let a=0,b=0;C.forEach(c=>{const k=kOf(c.id);if(k===1)a++;if(k===2)b++});$("#st").textContent="✓ "+a+" · 🔁 "+b+" · "+C.length+" cards"}
+function renderFilters(){const F=[["all","All"],["1","M1"],["2","M2"],["3","M3"],["4","M4"],["rev","🔁 Revisit"]];
+$("#fl").innerHTML=F.map(f=>'<button class="chip'+(PF.f===f[0]?" on":"")+'" data-f="'+f[0]+'">'+f[1]+'</button>').join("")+'<span id="st"></span>';stats()}
+function resetFeed(){feed.innerHTML="";Q=[];round=0;feed.scrollTop=0;more(8)}
+feed.addEventListener("scroll",()=>{if(feed.scrollTop+feed.clientHeight*2.2>feed.scrollHeight)more(6)},{passive:true});
+$("#fl").addEventListener("click",e=>{const b=e.target.closest("[data-f]");if(!b)return;PF.f=b.dataset.f;sv();renderFilters();resetFeed()});
+feed.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b)return;const card=b.closest("[data-id]"),a=b.dataset.a;
+if(a==="bk"){openBook(+b.dataset.p);return}
+const id=+card.dataset.id;ST[id]=ST[id]||{};
+if(a==="ok"){ST[id].k=ST[id].k===1?0:1;if(ST[id].k===1)Q=Q.filter(x=>x!==id)}
+if(a==="rv"){ST[id].k=ST[id].k===2?0:2;if(ST[id].k===2&&Q.length>2){Q=Q.filter(x=>x!==id);Q.splice(Math.min(Q.length,3+Math.floor(Math.random()*5)),0,id)}}
+card.querySelector(".b1").classList.toggle("on",ST[id].k===1);card.querySelector(".b2").classList.toggle("on",ST[id].k===2);sv();stats()});
+/* ---------- tabs ---------- */
+function tab(t){$("#rv").classList.toggle("hide",t!=="r");$("#bv").classList.toggle("hide",t!=="b");document.querySelectorAll("#nav [data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===t));if(t==="b")initReader()}
+$("#nav").addEventListener("click",e=>{const b=e.target.closest("[data-t]");if(b)tab(b.dataset.t)});
+function openBook(p){PF.last=p;sv();tab("b");if(PDF)goto(p)}
+/* ---------- storage for the PDF ---------- */
+const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open("fr",1);r.onupgradeneeded=()=>r.result.createObjectStore("kv");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function idbGet(k){const d=await idb();return new Promise((res,rej)=>{const q=d.transaction("kv").objectStore("kv").get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>rej(q.error)})}
+async function idbSet(k,v){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction("kv","readwrite");t.objectStore("kv").put(v,k);t.oncomplete=()=>res();t.onerror=()=>rej(t.error)})}
+/* ---------- PDF reader ---------- */
+const CDN="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+const addScript=src=>new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=()=>rej(new Error("load"));document.head.appendChild(s)});
+async function loadLib(){if(window.pdfjsLib)return window.pdfjsLib;
+try{let js=await idbGet("lib-js"),wk=await idbGet("lib-wk");
+if(!js||!wk){const r=await Promise.all([fetch(CDN+"pdf.min.js").then(x=>x.text()),fetch(CDN+"pdf.worker.min.js").then(x=>x.text())]);js=r[0];wk=r[1];try{await idbSet("lib-js",js);await idbSet("lib-wk",wk)}catch(e){}}
+await addScript(URL.createObjectURL(new Blob([js],{type:"text/javascript"})));
+window.pdfjsLib.GlobalWorkerOptions.workerSrc=URL.createObjectURL(new Blob([wk],{type:"text/javascript"}))}
+catch(e){if(!window.pdfjsLib)await addScript(CDN+"pdf.min.js");window.pdfjsLib.GlobalWorkerOptions.workerSrc=CDN+"pdf.worker.min.js"}
+return window.pdfjsLib}
+let PDF=null,IO=null,HS=[],busyOpen=false;
+const say=t=>{$("#pm").textContent=t};
+function showPick(msg){$("#pick").classList.remove("hide");$("#pg").classList.add("hide");$("#tb").classList.add("hide");if(msg)say(msg)}
+async function initReader(){if(PDF||busyOpen)return;busyOpen=true;
+try{let buf=null;try{buf=await idbGet("pdf")}catch(e){}
+if(!buf){showPick();busyOpen=false;return}
+await openBuf(buf)}catch(e){showPick("Couldn’t open the saved PDF. Please choose it again.")}busyOpen=false}
+async function openBuf(buf){say("Opening your book…");$("#pick").classList.remove("hide");
+const lib=await loadLib();PDF=await lib.getDocument({data:buf.slice(0)}).promise;buildPages()}
+$("#pb").onclick=$("#cp").onclick=()=>$("#pf").click();
+$("#pf").onchange=async e=>{const f=e.target.files[0];if(!f)return;busyOpen=true;
+try{say("Reading the file…");const buf=await f.arrayBuffer();try{await idbSet("pdf",buf)}catch(x){}
+if(IO)IO.disconnect();PDF=null;await openBuf(buf)}catch(x){showPick("That file couldn’t be opened. Please try another PDF.")}
+busyOpen=false;e.target.value=""};
+async function buildPages(){const pg=$("#pg"),first=await PDF.getPage(1),v=first.getViewport({scale:1}),n=PDF.numPages;
+pg.innerHTML="";HS=[];pg.style.setProperty("--z",PF.z);pg.classList.toggle("night",!!PF.night);$("#nt").classList.toggle("on",!!PF.night);
+for(let i=1;i<=n;i++){const h=document.createElement("div");h.className="pgh";h.dataset.n=i;h.style.aspectRatio=v.width+" / "+v.height;h.innerHTML="<canvas></canvas>";pg.appendChild(h);HS.push(h)}
+$("#pick").classList.add("hide");pg.classList.remove("hide");$("#tb").classList.remove("hide");
+$("#jr").innerHTML=RES.filter(r=>r[2]<=n).map(r=>'<option value="'+r[2]+'">'+r[0]+' · '+esc(r[1])+' (p.'+r[2]+')</option>').join("");
+if(IO)IO.disconnect();
+IO=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting?draw(e.target):free(e.target)),{root:$("#pgs"),rootMargin:"1400px 0px"});
+HS.forEach(h=>IO.observe(h));
+requestAnimationFrame(()=>goto(Math.min(PF.last||1,n)))}
+async function draw(h){if(h._ok||h._busy||!PDF)return;h._busy=1;
+try{const page=await PDF.getPage(+h.dataset.n),css=h.clientWidth||300,dpr=Math.min(window.devicePixelRatio||1,2),b=page.getViewport({scale:1}),sc=Math.min(css/b.width*dpr,4),vp=page.getViewport({scale:sc}),cv=h.querySelector("canvas");
+cv.width=Math.floor(vp.width);cv.height=Math.floor(vp.height);await page.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise;h._ok=1}catch(e){}
+h._busy=0}
+function free(h){if(h._busy)return;const cv=h.querySelector("canvas");cv.width=cv.height=0;h._ok=0}
+function goto(n){const h=HS[n-1];if(h)$("#pgs").scrollTop=h.offsetTop-8}
+let raf=0;
+$("#pgs").addEventListener("scroll",()=>{if(raf)return;raf=requestAnimationFrame(()=>{raf=0;if(!HS.length)return;const top=$("#pgs").getBoundingClientRect().top+40;let cur=1;for(const h of HS){if(h.getBoundingClientRect().bottom>top){cur=+h.dataset.n;break}}
+if(cur!==PF.last){PF.last=cur;sv()}if(document.activeElement!==$("#pn"))$("#pn").value=cur+"/"+HS.length;const r=RES.filter(x=>cur>=x[2]&&cur<=x[3])[0];if(r)$("#jr").value=r[2]})},{passive:true});
+$("#jr").onchange=()=>goto(+$("#jr").value);
+$("#pn").onfocus=e=>{e.target.value=""};
+$("#pn").onchange=e=>{const n=parseInt(e.target.value,10);if(n>=1&&n<=HS.length)goto(n);e.target.blur();e.target.value=PF.last+"/"+HS.length};
+$("#pn").onblur=e=>{e.target.value=PF.last+"/"+HS.length};
+const ZS=[1,1.5,2,3];
+function zoom(d){let i=ZS.indexOf(PF.z);if(i<0)i=0;i=Math.max(0,Math.min(ZS.length-1,i+d));if(ZS[i]===PF.z)return;const cur=PF.last;PF.z=ZS[i];sv();$("#pg").style.setProperty("--z",PF.z);HS.forEach(h=>{free(h);IO.unobserve(h);IO.observe(h)});requestAnimationFrame(()=>goto(cur))}
+$("#zi").onclick=()=>zoom(1);$("#zo").onclick=()=>zoom(-1);
+$("#nt").onclick=()=>{PF.night=PF.night?0:1;sv();$("#pg").classList.toggle("night",!!PF.night);$("#nt").classList.toggle("on",!!PF.night)};
+/* ---------- start ---------- */
+renderFilters();more(8);
+try{if("serviceWorker" in navigator&&location.protocol.indexOf("http")===0)navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}
+</script>
+</body>
+</html>
