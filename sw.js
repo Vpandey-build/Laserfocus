@@ -1,1 +1,6 @@
-const CACHE='inner-practice-shell-v2';const CORE=['./','./index.html','./app.js','./cards.json','./manifest.json','./icon.svg'];self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting())));self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET')return;if(u.origin===location.origin){e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(x=>{const copy=x.clone();caches.open(CACHE).then(c=>c.put(e.request,copy));return x}).catch(()=>caches.match('./index.html'))));return}if(u.hostname.includes('cdnjs.cloudflare.com')){e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(x=>{if(x.ok)caches.open(CACHE).then(c=>c.put(e.request,x.clone()));return x})));}});
+var V="idiary-v2",FILES=["./","index.html","manifest.json","icon-192.png","icon-512.png"];
+self.addEventListener("install",function(e){e.waitUntil(caches.open(V).then(function(c){return c.addAll(FILES)}));self.skipWaiting()});
+self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(k){return Promise.all(k.filter(function(x){return x!==V}).map(function(x){return caches.delete(x)}))}));self.clients.claim()});
+self.addEventListener("fetch",function(e){
+if(e.request.method!=="GET")return;
+e.respondWith(fetch(e.request).then(function(res){var cp=res.clone();caches.open(V).then(function(c){c.put(e.request,cp)});return res}).catch(function(){return caches.match(e.request)}))});
